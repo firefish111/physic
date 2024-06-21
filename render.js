@@ -32,8 +32,14 @@ class Render {
           this.canv.height - strk/2, // this stops floating shapes
         );
 
+        k.roll(
+          this.canv.width - strk/2, // half stroke width, as centre of stroke line is edge of shape
+          this.canv.height - strk/2,
+        );
+
         if (y == this.canv.height) { // if on floor
-          k.bounce()
+          k.isBouncing ??= true;
+          k.bounce();
         }
       }
 
@@ -67,15 +73,16 @@ class Render {
 }
 
 const rd = new Render(document.querySelector("canvas#canv"));
-let rect = new Rectangle({ fill: "orange", stroke: "black", strokeWidth: 8 }, 100, 20, 210, 85);
+let rect = new Rectangle({ fill: "gold", stroke: "black", strokeWidth: 8 }, 100, 20, 210, 85);
 let circ = new Circle({ fill: "blue", stroke: "#a4db0b", strokeWidth: 5 }, 500, 200, 25);
+let curv = new Arc({ stroke: "#d29480", strokeWidth: 15 }, 300, 200, 35, .5, 1.8);
 let lin = new Line({ stroke: "#a952b9", strokeWidth: 10 }, 460, 280, 330, 120);
 let lin2 = new Line({ stroke: "#cd2246", strokeWidth: 5 }, 530, 350, 580, 60);
 
 // dynamically pass the canvas, as the canvas' dimensions are tied to the viewport
 let floor = new CanvasBorder({ stroke: "black", strokeWidth: 1 }, rd.canv);
 
-rd.putShape(floor, rect, circ, lin, lin2);
+rd.putShape(floor, rect, circ, curv, lin, lin2);
 
 window.setInterval(() => {
   rd.tick();

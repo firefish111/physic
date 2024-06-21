@@ -25,9 +25,8 @@ class Shape {
 
     this.ROTATIONAL_SCALE = 80;
     
-    // bounce 1 time means it bounces high, bounce 2 times and it stops bouncing as high, for some reason
-    // it works like this, don't touch it whatever you do
-    this.bounces = 1;
+    this.isBouncing = null;
+    this.bouncingFor = 0;
 
     // infinite (positive or negative) are means zero bounciness
     this.area = -Infinity;
@@ -40,12 +39,15 @@ class Shape {
 
   setpath() {}
 
-  bounce() {
-    // can only bounce a limited number of times
-    // not exactly sure why adding a "<= 0" afterwards doesn't work
-    if (this.bounces--) {
-      this.velocity[1] = -this.velocity[1] / (this.area ** .09);
-    }
+  rotate() {}
+  roll() {}
+
+  bounce(...a) {
+    this.bouncingFor++;
+    if (!this.isBouncing) return;
+
+    this.velocity[1] = -Math.abs(this.velocity[1] / (this.area ** .07));
+    if (Math.abs(this.velocity[1]) < 1) this.isBouncing = false;
   }
 }
 
@@ -168,9 +170,9 @@ class Line extends Shape {
 
 // arc can be applied to much the same stuff as the line
 class Arc extends Line {
-  setpath(x, y, r, angle) {
-    this.path.arc(x, y, r, 0, angle /* in radians */, angle < 0);
-    this.area = Math.PI * (r**2)
+  setpath(x, y, r, start, angle) {
+    this.path.arc(x, y, r, start, start + angle /* in radians */, angle < 0);
+    this.area = Math.PI * (r**2);
   }
 
   translate(x, y, limx, limy) {
@@ -189,17 +191,33 @@ class Arc extends Line {
   }
 
   rotate(theta) {
-    // x' = xcos(theta) - ysin(theta)
-    // y' = xsin(theta) + ycos(theta)
-    //this.store[0] = this.store[0] * Math.cos(theta) - this.store[1] * Math.sin(theta);
-    //this.store[1] = this.store[0] * Math.sin(theta) + this.store[1] * Math.cos(theta);
+    // probably the easiest thing to rotate
+    this.store[3] += theta;
+    this.store[3] %= Math.PI * 2;
+  }
+
+  roll(limx, limy) {
+    if (this.bouncingFor <= 2) {
+      this.rollable = this.area;
+    }
+
+    if (this.isBouncing === null) return;
+    
+    let theta = this.rollable * .01 * DEGREE;
+    this.rotate(theta);
+    this.velocity[0] = Math.PI * theta * this.store[2]; 
+
+    // friction
+    if (this.isBouncing == false) {
+      this.rollable *= .96;
+    }
   }
 }
 
 // circle is just a 360deg (2pi rad) arc
 class Circle extends Arc {
   constructor(...args) {
-    super(...args, Math.PI * 2);
+    super(...args, 0, Math.PI * 2);
   }
 
   rotate() {
