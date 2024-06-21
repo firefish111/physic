@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>psychics</title>
+    <style>
+      * {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canv" width="1024" height="768"></canvas>
+    <script src="shapes.js"></script>
+    <script src="render.js"></script>
+    <script>
+      let resize = () => {
+        rd.canv.height = window.innerHeight;
+        rd.canv.width = window.innerWidth;
+      }
+
+      resize();
+      window.onresize = resize;
+    </script>
+  </body>
+</html>
