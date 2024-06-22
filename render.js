@@ -52,7 +52,7 @@ class Render {
   drawShape(...shps) {
     ((shps.length === 1 && shps[0] instanceof Array) ? shps[0] : shps).forEach(shp => {
       shp.path = new Path2D();
-      shp.setpath(...shp.store);
+      shp.setpath(...shp.ps, ...shp.store);
 
       this.rend.fillStyle = shp.style.fill ?? "transparent";
       this.rend.fill(shp.path);
@@ -75,14 +75,14 @@ class Render {
 }
 
 const rd = new Render(document.querySelector("canvas#canv"));
-let rect = new Rectangle({ fill: "gold", stroke: "black", strokeWidth: 8 }, 100, 20, 210, 85);
-let circ = new Circle({ fill: "blue", stroke: "#a4db0b", strokeWidth: 5 }, 500, 200, 25);
-let curv = new Arc({ stroke: "#d29480", strokeWidth: 15 }, 300, 200, 35, .5, 1.8);
-let lin = new Line({ stroke: "#a952b9", strokeWidth: 10 }, 460, 280, 330, 120);
-let lin2 = new Line({ stroke: "#cd2246", strokeWidth: 5 }, 530, 350, 580, 60);
+let rect = new Rectangle({ fill: "gold", stroke: "black", strokeWidth: 8 }, [100, 20], [210, 85]);
+let circ = new Circle({ fill: "blue", stroke: "#a4db0b", strokeWidth: 5 }, [500, 200], 25);
+let curv = new Arc({ stroke: "#d29480", strokeWidth: 15 }, [300, 200], 35, .5, 1.8);
+let lin = new Line({ stroke: "#a952b9", strokeWidth: 10 }, [460, 280], [330, 120]);
+let lin2 = new Line({ stroke: "#cd2246", strokeWidth: 5 }, [530, 350], [580, 60]);
 
 // dynamically pass the canvas, as the canvas' dimensions are tied to the viewport
-let floor = new CanvasBorder({ stroke: "black", strokeWidth: 1 }, rd.canv);
+let floor = new CanvasBorder({ stroke: "black", strokeWidth: 1, movable: false }, rd.canv);
 
 rd.putShape(floor, rect, circ, curv, lin, lin2);
 
