@@ -1,5 +1,9 @@
+// stuff about the universe or something
 const SCALE = 100; // px = cm
 const GRAVITY = 9.81; // 9.81 m/s^2
+const TPS = 60; // ticks per second (tick === frame)
+const DEGREE = Math.PI/180; // handy constant for one degree
+
 /**
  * @method putShape Initialise shape for drawing to screen
  * @method drawShape Draw shape to screen
@@ -9,8 +13,6 @@ class Render {
   constructor(cv) { // init func
     this.canv = cv;
     this.rend = this.canv.getContext("2d");
-
-    this.TPS = 60; // ticks per second (tick === frame)
 
     this.shp_lst = [];
   }
@@ -24,10 +26,10 @@ class Render {
       let [x, y] = k.bottom_point();
       let strk = k.style.strokeWidth;
       if (x <= this.canv.width && y <= this.canv.height) {
-        k.velocity[1] += GRAVITY * SCALE / this.TPS; // 9.81/60, to convert m/s^2 into px/t^2
+        k.velocity[1] += GRAVITY * SCALE / TPS; // 9.81/60, to convert m/s^2 into px/t^2
         k.translate(
-          k.velocity[0] / this.TPS, // velocity is per second, so we make it per tick
-          k.velocity[1] / this.TPS,
+          k.velocity[0] / TPS, // velocity is per second, so we make it per tick
+          k.velocity[1] / TPS,
           this.canv.width - strk/2, // half stroke width, as centre of stroke line is edge of shape
           this.canv.height - strk/2, // this stops floating shapes
         );
@@ -86,4 +88,4 @@ rd.putShape(floor, rect, circ, curv, lin, lin2);
 
 window.setInterval(() => {
   rd.tick();
-}, 1000 / rd.TPS);
+}, 1000 / TPS);

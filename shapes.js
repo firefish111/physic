@@ -51,8 +51,6 @@ class Shape {
   }
 }
 
-const DEGREE = Math.PI/180;
-
 class Rectangle extends Shape {
   setpath(x1, y1, x2, y2) {
     this.path.rect(x1, y1, x2 - x1, y2 - y1);
@@ -183,7 +181,7 @@ class Arc extends Line {
     this.store[1] = Math.min(this.store[1] + capy, limy);
   }
 
-  bottom_point() {
+  bottom_point() { // we pretend it's a circle, so it's basically just a transparent ball with an arc on it
     return [
       this.store[0] + this.style.strokeWidth / 2,
       this.store[1] + this.store[2] + this.style.strokeWidth / 2
@@ -198,18 +196,19 @@ class Arc extends Line {
 
   roll(limx, limy) {
     if (this.bouncingFor <= 2) {
-      this.rollable = this.area;
+      this.rollable = this.area * 2;
     }
 
+    // if we haven't started bouncing, ignore
     if (this.isBouncing === null) return;
     
     let theta = this.rollable * .01 * DEGREE;
-    this.rotate(theta);
+    this.rotate(theta / TPS); // we divide by TPS, as we are calling this once every tick - we rotate only 1/60th in one sec
     this.velocity[0] = Math.PI * theta * this.store[2]; 
 
     // friction
     if (this.isBouncing == false) {
-      this.rollable *= .96;
+      this.rollable *= .995;
     }
   }
 }
